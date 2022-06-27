@@ -25,7 +25,9 @@ public class SellerDaoJDBC implements SellerDao {
         PreparedStatement st = null;
         ResultSet rs = null;
 
-        String update =  "INSERT INTO seller (Name,Email,BirthDate,BaseSalary,DepartmentId) VALUES " +
+        String update = "INSERT INTO seller " +
+                        "(Name,Email,BirthDate,BaseSalary,DepartmentId) " +
+                        "VALUES " +
                         "(?,?,?,?,?)";
 
         try {
@@ -67,10 +69,77 @@ public class SellerDaoJDBC implements SellerDao {
     @Override
     public void update(Seller obj) {
 
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        String update = "UPDATE seller " +
+                        "set Name = ?, " +
+                        "Email = ?, " +
+                        "BirthDate = ?, " +
+                        "BaseSalary = ?, " +
+                        "DepartmentId = ? " +
+                        "where id = ? limit 1";
+
+
+        try {
+
+            st = conn.prepareStatement(update, Statement.RETURN_GENERATED_KEYS);
+
+            st.setString(1,obj.getName());
+            st.setString(2,obj.getEmail());
+            st.setDate(3,new java.sql.Date(obj.getBirthDate().getTime()));
+            st.setDouble(4,obj.getBaseSalary());
+            st.setInt(5,obj.getDepartment().getId());
+            st.setInt(6,obj.getId());
+
+            int rowsAffected = st.executeUpdate();
+            rs = st.getGeneratedKeys();
+
+            if (rowsAffected > 0) {
+
+                if (rs.next()) {
+
+                    System.out.println("Rows affected: " + rowsAffected);
+                    obj.setId(rs.getInt(1));
+
+                }
+
+            } else {
+                throw new DbException("Error! No rows affected!");
+            }
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
+        }
+
+
     }
 
     @Override
     public void deleteById(Integer id) {
+
+        PreparedStatement st = null;
+        String query =  "DELETE FROM seller WHERE Id = ? limit 1";
+
+        try {
+
+            st = conn.prepareStatement(query);
+            st.setInt(1,id);
+            int rowsAffected = st.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Success! " + rowsAffected + " rows affected!");
+            } else {
+                throw new DbException("Error in delete! No Rows affected!");
+            }
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+        }
 
     }
 

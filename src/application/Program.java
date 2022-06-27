@@ -37,12 +37,26 @@ public class Program {
 
         System.out.println("=== TEST4: Seller insert ===");
 
-        Seller sellerUpdate = new Seller(null,"Thiago Gonçalves", "tsyhwh55@gmail.com" , new Date(),2500.0, dep);
-        sellerDao.insert(sellerUpdate);
-        System.out.println("Inserted! new id: " + sellerUpdate.getId());
+        Seller sellerInsert = new Seller(null,"Thiago Gonçalves", "tsyhwh55@gmail.com" , new Date(),2500.0, dep);
+        sellerDao.insert(sellerInsert);
+        System.out.println("Inserted! new id: " + sellerInsert.getId());
+        System.out.println(sellerInsert.toString());
+        System.out.println();
+
+        System.out.println("=== TEST5: Seller update ===");
+
+        Seller sellerUpdate = new Seller(8,"Thiago Gonçalves Souza", "tsyhwh55@gmail.com" , new Date(),2500.0, dep);
+        sellerDao.update(sellerUpdate);
+        System.out.println("Updated! id: " + sellerUpdate.getId());
         System.out.println(sellerUpdate.toString());
+        System.out.println();
 
+        System.out.println("=== TEST6: Seller delete ===");
 
+        Seller sellerDelete = new Seller(8,"Thiago Gonçalves Souza", "tsyhwh55@gmail.com" , new Date(),2500.0, dep);
+        sellerDao.deleteById(sellerDelete.getId());
+        System.out.println("Deleted! Seller: " + sellerDelete.toString());
+        System.out.println();
 
     }
 
