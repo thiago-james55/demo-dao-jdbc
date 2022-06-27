@@ -6,11 +6,10 @@ import model.dao.SellerDao;
 import model.entitites.Department;
 import model.entitites.Seller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.Instant;
 import java.util.*;
+import java.util.Date;
 
 public class SellerDaoJDBC implements SellerDao {
 
@@ -22,6 +21,46 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void insert(Seller obj) {
+
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        String update =  "INSERT INTO seller (Name,Email,BirthDate,BaseSalary,DepartmentId) VALUES " +
+                        "(?,?,?,?,?)";
+
+        try {
+
+            st = conn.prepareStatement(update, Statement.RETURN_GENERATED_KEYS);
+
+            st.setString(1,obj.getName());
+            st.setString(2,obj.getEmail());
+            st.setDate(3,new java.sql.Date(obj.getBirthDate().getTime()));
+            st.setDouble(4,obj.getBaseSalary());
+            st.setInt(5,obj.getDepartment().getId());
+
+            int rowsAffected = st.executeUpdate();
+            rs = st.getGeneratedKeys();
+
+            if (rowsAffected > 0) {
+
+                if (rs.next()) {
+
+                    System.out.println("Rows affected: " + rowsAffected);
+                    obj.setId(rs.getInt(1));
+
+                }
+
+            } else {
+                throw new DbException("Error! No rows affected!");
+            }
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
+        }
+
 
     }
 

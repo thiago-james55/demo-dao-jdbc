@@ -35,6 +35,13 @@ public class Program {
         allSellers.forEach(System.out::println);
         System.out.println();
 
+        System.out.println("=== TEST4: Seller insert ===");
+
+        Seller sellerUpdate = new Seller(null,"Thiago Gonçalves", "tsyhwh55@gmail.com" , new Date(),2500.0, dep);
+        sellerDao.insert(sellerUpdate);
+        System.out.println("Inserted! new id: " + sellerUpdate.getId());
+        System.out.println(sellerUpdate.toString());
+
 
 
     }
